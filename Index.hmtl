@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt Hub | Premium Access</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Animasi Intro / Loader -->
+    <div id="intro-overlay">
+        <div class="intro-container">
+            <div class="cyber-circle"></div>
+            <h2 class="intro-title">INITIALIZING</h2>
+            <div class="loading-bar">
+                <div class="fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Konten Utama -->
+    <div id="main-app" class="hidden">
+        <div class="background-glow"></div>
+        
+        <header>
+            <div class="logo">PROMPT<span>GEN</span></div>
+        </header>
+
+        <main class="content-wrapper">
+            <div class="glass-box">
+                <div class="chip">Ready to Create</div>
+                <h1>Kirim Prompt Kreatif Anda</h1>
+                <p>Bagikan instruksi terbaik Anda kepada komunitas.</p>
+                
+                <div class="input-area">
+                    <textarea id="promptInput" placeholder="Tuliskan prompt Anda di sini..."></textarea>
+                    <div class="button-wrapper">
+                        <button id="sendBtn" onclick="handleSend()">
+                            Kirim Prompt
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="statusMessage" class="status-box"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+:root {
+    --primary: #6366f1;
+    --accent: #a855f7;
+    --bg: #030712;
+    --glass: rgba(255, 255, 255, 0.03);
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    color: #fff;
+    overflow: hidden;
+}
+
+/* ANIMASI INTRO */
+#intro-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1s ease, visibility 1s;
+}
+
+.intro-container {
+    text-align: center;
+}
+
+.cyber-circle {
+    width: 80px;
+    height: 80px;
+    border: 3px solid var(--primary);
+    border-top-color: transparent;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    animation: spin 1s infinite linear;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+.intro-title {
+    letter-spacing: 5px;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.loading-bar {
+    width: 200px;
+    height: 2px;
+    background: rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-bar .fill {
+    width: 0%;
+    height: 100%;
+    background: var(--primary);
+    animation: loadProgress 2.5s forwards;
+}
+
+/* KONTEN UTAMA */
+#main-app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#main-app.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.background-glow {
+    position: fixed;
+    top: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 50%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0,0,0,0) 70%);
+    pointer-events: none;
+}
+
+header {
+    padding: 30px 5%;
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: -1px;
+}
+
+.logo span { color: var(--primary); }
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.glass-box {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    padding: 50px 40px;
+    border-radius: 30px;
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.chip {
+    display: inline-block;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    padding: 6px 15px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+h1 { font-size: 2.5rem; margin-bottom: 15px; font-weight: 800; }
+p { color: #94a3b8; margin-bottom: 40px; line-height: 1.6; }
+
+.input-area {
+    position: relative;
+    background: rgba(0,0,0,0.3);
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+}
+
+textarea {
+    width: 100%;
+    height: 150px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 15px;
+    font-size: 16px;
+    resize: none;
+}
+
+.button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
+}
+
+.icon { width: 18px; height: 18px; }
+
+.status-box {
+    margin-top: 25px;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    display: none;
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes loadProgress { to { width: 100%; } }
+
+.hidden { display: none; }
+
+window.addEventListener('load', () => {
+    const overlay = document.getElementById('intro-overlay');
+    const mainApp = document.getElementById('main-app');
+
+    // Waktu tunggu animasi loading (3 detik)
+    setTimeout(() => {
+        // Hilangkan overlay
+        overlay.style.opacity = '0';
+        overlay.style.visibility = 'hidden';
+
+        // Tampilkan konten utama dengan animasi
+        mainApp.classList.remove('hidden');
+        setTimeout(() => {
+            mainApp.classList.add('visible');
+        }, 100);
+    }, 3000);
+});
+
+function handleSend() {
+    const input = document.getElementById('promptInput');
+    const status = document.getElementById('statusMessage');
+    const btn = document.getElementById('sendBtn');
+
+    if (input.value.trim() === "") {
+        alert("Silakan tulis sesuatu dulu!");
+        return;
+    }
+
+    // Efek loading saat klik
+    btn.innerText = "Mengirim...";
+    btn.style.opacity = "0.7";
+    btn.disabled = true;
+
+    setTimeout(() => {
+        status.style.display = 'block';
+        status.innerText = "✨ Prompt berhasil dikirim!";
+        input.value = "";
+        btn.innerHTML = `Kirim Prompt <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        btn.style.opacity = "1";
+        btn.disabled = false;
+        
+        setTimeout(() => {
+            status.style.display = 'none';
+        }, 4000);
+    }, 1500);
+}
